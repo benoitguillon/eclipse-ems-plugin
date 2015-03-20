@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+	<!-- Builder declaration -->
+   <extension id="emsSampleBuilder" name="EMS Project Builder" point="org.eclipse.core.resources.builders">
+      <builder hasNature="true">
+         <run class="org.bgi.ems.builder.EmsSampleBuilder"/>
+      </builder>
+   </extension>
+   
+   <!-- Project nature -->
+   <extension id="emsSampleNature" name="EMS Sample Project Nature" point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run class="org.bgi.ems.builder.EmsSampleNature"/>
+      </runtime>
+      <builder id="org.bgi.ems.emsSampleBuilder"/>
+   </extension>
+   
+   <!-- Add / remove project nature command -->
+   <extension point="org.eclipse.ui.commands">
+      <category id="org.bgi.ems.emsSampleNature.category" name="EMS Sample Project Nature commands"/>
+      <command
+            categoryId="org.bgi.ems.emsSampleNature.category"
+            defaultHandler="org.bgi.ems.builder.AddRemoveEmsSampleNatureHandler"
+            id="org.bgi.ems.addRemoveEmsSampleNature"
+            name="Add/Remove EMS Sample Project Nature">
+      </command>
+   </extension>
+   
+   <!-- Menu contributions ... -->
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="popup:org.eclipse.ui.projectConfigure?after=additions">
+         <!-- Disable EMS features -->
+         <command commandId="org.bgi.ems.addRemoveEmsSampleNature" label="Disable EMS features" style="push">
+            <visibleWhen checkEnabled="false">
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate>
+                     <adapt type="org.eclipse.core.resources.IProject">
+                        <test property="org.eclipse.core.resources.projectNature"
+                              value="org.bgi.ems.emsSampleNature">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         
+         <!-- Enable EMS features -->
+         <command commandId="org.bgi.ems.addRemoveEmsSampleNature" label="Enable EMS features" style="push">
+            <visibleWhen checkEnabled="false">
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate>
+                     <adapt type="org.eclipse.core.resources.IProject">
+                        <not>
+                           <test property="org.eclipse.core.resources.projectNature"
+                                 value="org.bgi.ems.emsSampleNature">
+                           </test>
+                        </not>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   
+   <!-- Markers -->
+   <extension id="xmlProblem" name="XML Problem" point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <persistent value="true"/>
+   </extension>
+
+</plugin>
